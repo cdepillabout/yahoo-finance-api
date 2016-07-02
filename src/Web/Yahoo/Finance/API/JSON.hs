@@ -18,8 +18,6 @@ import Data.Aeson (FromJSON(..), Value, (.:), withObject)
 import Data.Aeson.Lens (key, values)
 import Data.Aeson.Types (Parser)
 import Data.Data (Data)
-import Data.Foldable (fold)
-import Data.List (intersperse)
 import Data.Proxy (Proxy(Proxy))
 import Data.String (IsString)
 import Data.Text (Text)
@@ -31,16 +29,7 @@ import Servant.API (Capture, Get, JSON, QueryParam, (:>))
 import Servant.Client (BaseUrl(..), ServantError, Scheme(..), client)
 import Web.HttpApiData (ToHttpApiData(..))
 
-newtype StockSymbol = StockSymbol { unStockSymbol :: Text }
-    deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
-
-instance ToHttpApiData StockSymbol where
-    toUrlPiece :: StockSymbol -> Text
-    toUrlPiece = unStockSymbol
-
-instance ToHttpApiData [StockSymbol] where
-    toUrlPiece :: [StockSymbol] -> Text
-    toUrlPiece = fold . intersperse "," . fmap toUrlPiece
+import Web.Yahoo.Finance.Types (StockSymbol)
 
 newtype QueryFormat = QueryFormat { unQueryFormat :: Text }
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)

@@ -16,6 +16,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Web.Yahoo.Finance.API.JSON
+                     , Web.Yahoo.Finance.Types
   build-depends:       base >= 4.7 && < 5
                      , aeson >= 0.11
                      , http-api-data >= 0.2
@@ -29,6 +30,7 @@ library
                      , time >= 1.5
                      , transformers >= 0.4
   default-language:    Haskell2010
+  ghc-options:         -Wall -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
 
 test-suite yahoo-finance-api-test
   type:                exitcode-stdio-1.0
