@@ -42,7 +42,7 @@ import Web.Yahoo.Finance.Types (StockSymbol)
 -- @
 --   (manager :: 'Manager') <- 'getGlobalManager'
 --   (eitherRes :: 'Either' 'ServantError' 'QuoteList') <-
---       'runExceptT' $ 'runReaderT' ('getQuote' ["VGTSX", "TRRNX"]) manager
+--       'runExceptT' $ 'runReaderT' ('getQuote' ["VGTSX", "GOOG"]) manager
 --   let (res :: 'QuoteList') = 'either' 'undefined' 'id' eitherRes -- Warning: this is unsafe...
 --   'show' $ 'unQuoteList' res
 -- @
@@ -65,21 +65,21 @@ import Web.Yahoo.Finance.Types (StockSymbol)
 -- >     , quoteYearLow = "12.760000"
 -- >     }
 -- > , Quote
--- >     { quoteChange = "0.140000"
--- >     , quoteChangePercent = "1.098904"
--- >     , quoteDayHigh = "0.000000"
--- >     , quoteDayLow = "0.000000"
--- >     , quoteIssuerName = "T. Rowe Price Retirement 2055"
--- >     , quoteIssuerNameLang = "T. Rowe Price Retirement 2055"
--- >     , quoteName = "T. Rowe Price 2055 Retirement F"
--- >     , quotePrice = "12.880000"
--- >     , quoteSymbol = "TRRNX"
--- >     , quoteTS = "1467326700"
--- >     , quoteType = "mutualfund"
--- >     , quoteUTCTime = 2016-06-30 22:45:00 UTC
--- >     , quoteVolume = "0"
--- >     , quoteYearHigh = "14.110000"
--- >     , quoteYearLow = "11.270000"
+-- >     { quoteChange = "7.110046"
+-- >     , quoteChangePercent = "1.027315"
+-- >     , quoteDayHigh = "700.650024"
+-- >     , quoteDayLow = "692.130127"
+-- >     , quoteIssuerName = "Alphabet Inc."
+-- >     , quoteIssuerNameLang = "Alphabet Inc."
+-- >     , quoteName = "Alphabet Inc."
+-- >     , quotePrice = "699.210022"
+-- >     , quoteSymbol = "GOOG"
+-- >     , quoteTS = "1467403200"
+-- >     , quoteType = "equity"
+-- >     , quoteUTCTime = 2016-07-01 20:00:00 UTC
+-- >     , quoteVolume = "1344710"
+-- >     , quoteYearHigh = "789.870000"
+-- >     , quoteYearLow = "515.180000"
 -- >     }
 -- > ]
 getQuote
