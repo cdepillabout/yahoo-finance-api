@@ -38,6 +38,8 @@ import Web.HttpApiData (ToHttpApiData(..))
 
 import Web.Yahoo.Finance.Types (StockSymbol)
 
+-- | Query format query param for the Yahoo finance webservice APIs.
+-- Normally should be the string @json@.
 newtype QueryFormat = QueryFormat { unQueryFormat :: Text }
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
 
@@ -45,6 +47,8 @@ instance ToHttpApiData QueryFormat where
     toQueryParam :: QueryFormat -> Text
     toQueryParam = unQueryFormat
 
+-- | View type query param for the Yahoo finance webservice APIs.
+-- Normally should be the string @detail@.
 newtype ViewType = ViewType { unViewType :: Text }
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
 
@@ -52,6 +56,7 @@ instance ToHttpApiData ViewType where
     toQueryParam :: ViewType -> Text
     toQueryParam = unViewType
 
+-- | Real-time stock quote.
 data Quote =
     Quote
         { quoteChange :: Text
