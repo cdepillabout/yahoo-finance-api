@@ -17,10 +17,11 @@ The 'getQuote' method is mainly used to obtain stock quotes for specific stocks.
 -}
 
 module Web.Yahoo.Finance.API.JSON
-    ( Quote(..)
-    , QuoteList(..)
-    , getQuote
+    ( getQuote
     , getQuoteTrans
+    -- * Types
+    , Quote(..)
+    , QuoteList(..)
     ) where
 
 import Control.Monad.Except (ExceptT(..), MonadError(..), runExceptT)
@@ -40,7 +41,7 @@ import Web.Yahoo.Finance.Types (StockSymbol)
 -- @
 --   (manager :: 'Manager') <- 'getGlobalManager'
 --   (eitherRes :: 'Either' 'ServantError' 'QuoteList') <-
---       'runExceptT' $ 'runReaderT' ('getQuote' ["VGTSX", "GOOG"]) manager
+--       'runExceptT' $ 'runReaderT' ('getQuote' [\"VGTSX\", \"GOOG\"]) manager
 --   let (res :: 'QuoteList') =
 --           'either' 'undefined' 'id' eitherRes -- Warning: this is unsafe...
 --   'show' $ 'unQuoteList' res

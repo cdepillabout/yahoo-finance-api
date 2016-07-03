@@ -7,14 +7,13 @@
 {-# LANGUAGE TypeOperators #-}
 
 {-|
-Module      : Web.Yahoo.Finance.API.JSON
-Description : Access methods for the Yahoo Finance JSON APIs.
+Module      : Web.Yahoo.Finance.API.JSON.Internal
+Description : Internal types and modules for the Yahoo Finance JSON APIs.
 Copyright   : (c) Dennis Gosnell, 2016
 License     : BSD3
 
-This module contians methods for accessing the Yahoo Finance webservice APIs.
-
-The 'getQuote' method is mainly used to obtain stock quotes for specific stocks.
+This module contians internal types and methods for accessing the Yahoo Finance
+webservice APIs.
 -}
 
 module Web.Yahoo.Finance.API.JSON.Internal where
@@ -97,7 +96,7 @@ instance FromJSON Quote where
             <*> obj .: "year_high"
             <*> obj .: "year_low"
 
--- | Newtype wrapper around a list of 'Quote'.
+-- | Newtype wrapper around a list of 'Quote's.
 newtype QuoteList = QuoteList { unQuoteList :: [Quote] }
     deriving (Eq, Show)
 
