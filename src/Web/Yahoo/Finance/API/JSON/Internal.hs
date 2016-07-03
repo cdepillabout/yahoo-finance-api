@@ -97,6 +97,7 @@ instance FromJSON Quote where
             <*> obj .: "year_high"
             <*> obj .: "year_low"
 
+-- | Newtype wrapper around a list of 'Quote'.
 newtype QuoteList = QuoteList { unQuoteList :: [Quote] }
     deriving (Eq, Show)
 
@@ -113,6 +114,7 @@ instance FromJSON QuoteList where
             key "resource" .
             key "fields"
 
+-- | Low-level Servant definition of the Yahoo Finance webservice API.
 type YahooFinanceJsonApi
     = "webservice"
     :> "v1"
@@ -123,6 +125,8 @@ type YahooFinanceJsonApi
     :> QueryParam "view" ViewType
     :> Get '[JSON] QuoteList
 
+-- | 'BaseUrl' for the Yahoo Finance webservice API.  This represents
+-- @https://finance.yahoo.com@.
 yahooFinanceJsonBaseUrl :: BaseUrl
 yahooFinanceJsonBaseUrl = BaseUrl
     { baseUrlScheme = Https

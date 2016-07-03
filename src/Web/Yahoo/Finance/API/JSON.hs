@@ -14,8 +14,6 @@ License     : BSD3
 This module contians methods for accessing the Yahoo Finance webservice APIs.
 
 The 'getQuote' method is mainly used to obtain stock quotes for specific stocks.
-
-Here is an example
 -}
 
 module Web.Yahoo.Finance.API.JSON
@@ -43,7 +41,8 @@ import Web.Yahoo.Finance.Types (StockSymbol)
 --   (manager :: 'Manager') <- 'getGlobalManager'
 --   (eitherRes :: 'Either' 'ServantError' 'QuoteList') <-
 --       'runExceptT' $ 'runReaderT' ('getQuote' ["VGTSX", "GOOG"]) manager
---   let (res :: 'QuoteList') = 'either' 'undefined' 'id' eitherRes -- Warning: this is unsafe...
+--   let (res :: 'QuoteList') =
+--           'either' 'undefined' 'id' eitherRes -- Warning: this is unsafe...
 --   'show' $ 'unQuoteList' res
 -- @
 --
