@@ -10,7 +10,7 @@ maintainer:          cdep.illabout@gmail.com
 copyright:           2016 Dennis Gosnell
 category:            Web
 build-type:          Simple
--- extra-source-files:
+extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
