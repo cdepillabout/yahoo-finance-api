@@ -19,8 +19,6 @@ webservice APIs.
 
 module Web.Yahoo.Finance.API.JSON.Internal where
 
-import Control.Monad.Trans.Either  
-import Control.Monad.Except (ExceptT(..))
 import Control.Lens (Traversal', (^..))
 import Data.Aeson (FromJSON(..), Value, (.:), withObject)
 import Data.Aeson.Lens (key, values)
@@ -32,12 +30,19 @@ import Data.Text (Text)
 import Data.Time.Clock (UTCTime)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
-import Network.HTTP.Client (Manager)
 import Servant.API
 import Servant.Client
-import Web.HttpApiData (ToHttpApiData(..))
 
 import Web.Yahoo.Finance.Types (StockSymbol)
+
+#if MIN_VERSION_servant(0, 9, 0)
+#elif MIN_VERSION_servant(0, 5, 0)
+import Control.Monad.Except
+import Network.HTTP.Client (Manager)
+#else
+import Control.Monad.Trans.Either
+import Web.HttpApiData (ToHttpApiData(..))  
+#endif
 
 -- | Query format query param for the Yahoo finance webservice APIs.
 -- Normally should be the string @json@.
@@ -146,6 +151,7 @@ yahooFinanceJsonBaseUrl = BaseUrl
 #endif    
     }
 
+-- | The order of arguments slightly changes for each version of servant. 
 #if MIN_VERSION_servant(0, 9, 0)
 getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ClientM QuoteList
 #elif MIN_VERSION_servant(0, 6, 0)

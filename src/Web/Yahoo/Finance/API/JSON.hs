@@ -25,9 +25,8 @@ module Web.Yahoo.Finance.API.JSON
     , QuoteList(..)
     ) where
 
-import Control.Monad.Trans.Either
-import Control.Monad.Except (ExceptT(..), MonadError(..), runExceptT)
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.Except
+-- import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Reader (MonadReader(..), ReaderT(..))
 import Network.HTTP.Client (HasHttpManager(..), Manager)
 import Servant.Client
@@ -35,6 +34,12 @@ import Servant.Client
 import Web.Yahoo.Finance.API.JSON.Internal
     ( Quote(..), QuoteList(..), getQuoteLowLevel, yahooFinanceJsonBaseUrl )
 import Web.Yahoo.Finance.Types (StockSymbol)
+
+#if MIN_VERSION_servant(0,5,0)
+  
+#else
+import Control.Monad.Trans.Either
+#endif
 
 -- | Get stock quotes from Yahoo Finance webservice APIs.
 --
@@ -92,10 +97,11 @@ getQuote
        )
     => [StockSymbol] -> m QuoteList
 getQuote stockSymbols = do
-    manager <- reader getHttpManager
-#if MIN_VERSION_servant(0, 9, 0)    
+#if MIN_VERSION_servant(0, 9, 0)
+    manager <- reader getHttpManager  
     eitherRes <- liftIO $ runClientM (getQuoteLowLevel stockSymbols (Just "json") (Just "detail")) (ClientEnv manager yahooFinanceJsonBaseUrl)
 #elif MIN_VERSION_servant(0, 6, 0)
+    manager <- reader getHttpManager
     eitherRes <- liftIO . runExceptT $
         getQuoteLowLevel
             stockSymbols
@@ -104,6 +110,7 @@ getQuote stockSymbols = do
             manager
             yahooFinanceJsonBaseUrl
 #elif MIN_VERSION_servant(0, 5, 0)
+    manager <- reader getHttpManager
     eitherRes <- liftIO . runExceptT $
         getQuoteLowLevel
             yahooFinanceJsonBaseUrl

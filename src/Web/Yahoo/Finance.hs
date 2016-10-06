@@ -13,5 +13,5 @@ module Web.Yahoo.Finance
     ( module X
     ) where
 
-import Web.Yahoo.Finance.API as X
+-- import Web.Yahoo.Finance.API as X
 import Web.Yahoo.Finance.Types as X

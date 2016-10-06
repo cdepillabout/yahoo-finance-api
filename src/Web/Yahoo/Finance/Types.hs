@@ -24,10 +24,12 @@ import Data.String (IsString)
 import Data.Text (Text)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
-import Web.HttpApiData (ToHttpApiData(..))
 
 import Servant.API
-import Servant.Client
+
+#if !MIN_VERSION_servant(0,5,0)
+import Web.HttpApiData (ToHttpApiData(..))  
+#endif
 
 -- | This type is used to represent a stock symbol.
 --
