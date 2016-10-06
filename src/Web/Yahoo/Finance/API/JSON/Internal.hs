@@ -1,10 +1,11 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE CPP                        #-}
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE DeriveDataTypeable         #-}
+{-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE InstanceSigs               #-}
+{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE TypeOperators              #-}
 
 {-|
 Module      : Web.Yahoo.Finance.API.JSON.Internal
@@ -12,12 +13,13 @@ Description : Internal types and modules for the Yahoo Finance JSON APIs.
 Copyright   : (c) Dennis Gosnell, 2016
 License     : BSD3
 
-This module contians internal types and methods for accessing the Yahoo Finance
+This module contains internal types and methods for accessing the Yahoo Finance
 webservice APIs.
 -}
 
 module Web.Yahoo.Finance.API.JSON.Internal where
 
+import Control.Monad.Trans.Either  
 import Control.Monad.Except (ExceptT(..))
 import Control.Lens (Traversal', (^..))
 import Data.Aeson (FromJSON(..), Value, (.:), withObject)
@@ -31,8 +33,8 @@ import Data.Time.Clock (UTCTime)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Network.HTTP.Client (Manager)
-import Servant.API (Capture, Get, JSON, QueryParam, (:>))
-import Servant.Client (BaseUrl(..), ServantError, Scheme(..), client)
+import Servant.API
+import Servant.Client
 import Web.HttpApiData (ToHttpApiData(..))
 
 import Web.Yahoo.Finance.Types (StockSymbol)
@@ -40,7 +42,11 @@ import Web.Yahoo.Finance.Types (StockSymbol)
 -- | Query format query param for the Yahoo finance webservice APIs.
 -- Normally should be the string @json@.
 newtype QueryFormat = QueryFormat { unQueryFormat :: Text }
+#if MIN_VERSION_servant(0, 5, 0)
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
+#else
+    deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable, ToText)
+#endif 
 
 instance ToHttpApiData QueryFormat where
     toQueryParam :: QueryFormat -> Text
@@ -49,7 +55,11 @@ instance ToHttpApiData QueryFormat where
 -- | View type query param for the Yahoo finance webservice APIs.
 -- Normally should be the string @detail@.
 newtype ViewType = ViewType { unViewType :: Text }
+#if MIN_VERSION_servant(0, 5, 0)
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
+#else
+    deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable, ToText)
+#endif 
 
 instance ToHttpApiData ViewType where
     toQueryParam :: ViewType -> Text
@@ -131,14 +141,18 @@ yahooFinanceJsonBaseUrl = BaseUrl
     { baseUrlScheme = Https
     , baseUrlHost = "finance.yahoo.com"
     , baseUrlPort = 443
+#if MIN_VERSION_servant(0, 5, 0)    
     , baseUrlPath = "/"
+#endif    
     }
 
-getQuoteLowLevel
-    :: [StockSymbol]
-    -> Maybe QueryFormat
-    -> Maybe ViewType
-    -> Manager
-    -> BaseUrl
-    -> ExceptT ServantError IO QuoteList
+#if MIN_VERSION_servant(0, 9, 0)
+getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ClientM QuoteList
+#elif MIN_VERSION_servant(0, 6, 0)
+getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> Manager -> BaseUrl -> ExceptT ServantError IO QuoteList
+#elif MIN_VERSION_servant(0, 5, 0) 
+getQuoteLowLevel :: BaseUrl -> Manager -> [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ExceptT ServantError IO QuoteList
+#else
+getQuoteLowLevel :: BaseUrl -> [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> EitherT ServantError IO QuoteList
+#endif
 getQuoteLowLevel = client (Proxy :: Proxy YahooFinanceJsonApi)
