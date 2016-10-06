@@ -26,18 +26,15 @@ module Web.Yahoo.Finance.API.JSON
     ) where
 
 import Control.Monad.Except
--- import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Reader (MonadReader(..), ReaderT(..))
 import Network.HTTP.Client (HasHttpManager(..), Manager)
 import Servant.Client
-
 import Web.Yahoo.Finance.API.JSON.Internal
     ( Quote(..), QuoteList(..), getQuoteLowLevel, yahooFinanceJsonBaseUrl )
 import Web.Yahoo.Finance.Types (StockSymbol)
 
-#if MIN_VERSION_servant(0,5,0)
-  
-#else
+-- servant version less than 0.5.0
+#if !MIN_VERSION_servant(0,5,0)
 import Control.Monad.Trans.Either
 #endif
 

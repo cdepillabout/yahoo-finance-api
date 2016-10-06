@@ -57,10 +57,9 @@ instance ToHttpApiData [StockSymbol] where
     toUrlPiece :: [StockSymbol] -> Text
     toUrlPiece = fold . intersperse "," . fmap toUrlPiece
 
---instance ToText StockSymbol where
---  toText (StockSymbol x) = x
 
 #if !MIN_VERSION_servant(0, 5, 0)
+-- | Connect separate 'StockSymbol's with a comma.
 instance ToText [StockSymbol] where
   toText :: [StockSymbol] -> Text  
   toText = fold . intersperse "," . fmap toText
