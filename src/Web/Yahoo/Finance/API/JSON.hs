@@ -1,9 +1,10 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE CPP               #-}
+{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE InstanceSigs      #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeOperators     #-}
 
 {-|
 Module      : Web.Yahoo.Finance.API.JSON
@@ -24,15 +25,18 @@ module Web.Yahoo.Finance.API.JSON
     , QuoteList(..)
     ) where
 
-import Control.Monad.Except (ExceptT(..), MonadError(..), runExceptT)
-import Control.Monad.IO.Class (MonadIO(..))
+import Control.Monad.Except
 import Control.Monad.Reader (MonadReader(..), ReaderT(..))
 import Network.HTTP.Client (HasHttpManager(..), Manager)
-import Servant.Client (ServantError)
-
+import Servant.Client
 import Web.Yahoo.Finance.API.JSON.Internal
     ( Quote(..), QuoteList(..), getQuoteLowLevel, yahooFinanceJsonBaseUrl )
 import Web.Yahoo.Finance.Types (StockSymbol)
+
+-- servant version less than 0.5.0
+#if !MIN_VERSION_servant(0,5,0)
+import Control.Monad.Trans.Either
+#endif
 
 -- | Get stock quotes from Yahoo Finance webservice APIs.
 --
@@ -90,6 +94,10 @@ getQuote
        )
     => [StockSymbol] -> m QuoteList
 getQuote stockSymbols = do
+#if MIN_VERSION_servant(0, 9, 0)
+    manager <- reader getHttpManager  
+    eitherRes <- liftIO $ runClientM (getQuoteLowLevel stockSymbols (Just "json") (Just "detail")) (ClientEnv manager yahooFinanceJsonBaseUrl)
+#elif MIN_VERSION_servant(0, 6, 0)
     manager <- reader getHttpManager
     eitherRes <- liftIO . runExceptT $
         getQuoteLowLevel
@@ -98,9 +106,25 @@ getQuote stockSymbols = do
             (Just "detail")
             manager
             yahooFinanceJsonBaseUrl
+#elif MIN_VERSION_servant(0, 5, 0)
+    manager <- reader getHttpManager
+    eitherRes <- liftIO . runExceptT $
+        getQuoteLowLevel
+            yahooFinanceJsonBaseUrl
+            manager
+            stockSymbols
+            (Just "json")
+            (Just "detail")
+#else
+    eitherRes <- liftIO . runEitherT $
+        getQuoteLowLevel
+            yahooFinanceJsonBaseUrl
+            stockSymbols
+            (Just "json")
+            (Just "detail")
+#endif
     either throwError pure eitherRes
 
 -- | Similar to 'getQuotes' but using transformers intead of mtl.
-getQuoteTrans
-    :: [StockSymbol] -> ReaderT Manager (ExceptT ServantError IO) QuoteList
+getQuoteTrans :: [StockSymbol] -> ReaderT Manager (ExceptT ServantError IO) QuoteList
 getQuoteTrans = getQuote

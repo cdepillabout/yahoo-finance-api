@@ -1,9 +1,10 @@
-{-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE CPP                        #-}
+{-# LANGUAGE DeriveDataTypeable         #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE InstanceSigs               #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 {-|
 Module      : Web.Yahoo.Finance.Types
@@ -23,7 +24,12 @@ import Data.String (IsString)
 import Data.Text (Text)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
-import Web.HttpApiData (ToHttpApiData(..))
+
+import Servant.API
+
+#if !MIN_VERSION_servant(0,5,0)
+import Web.HttpApiData (ToHttpApiData(..))  
+#endif
 
 -- | This type is used to represent a stock symbol.
 --
@@ -33,7 +39,11 @@ import Web.HttpApiData (ToHttpApiData(..))
 -- >>> "GOOG" :: StockSymbol
 -- StockSymbol {unStockSymbol = "GOOG"}
 newtype StockSymbol = StockSymbol { unStockSymbol :: Text }
+#if MIN_VERSION_servant(0, 5, 0)
     deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable)
+#else
+    deriving (Data, Eq, Generic, IsString, Ord, Show, Typeable, ToText)
+#endif 
 
 instance ToHttpApiData StockSymbol where
     toUrlPiece :: StockSymbol -> Text
@@ -46,3 +56,11 @@ instance ToHttpApiData StockSymbol where
 instance ToHttpApiData [StockSymbol] where
     toUrlPiece :: [StockSymbol] -> Text
     toUrlPiece = fold . intersperse "," . fmap toUrlPiece
+
+
+#if !MIN_VERSION_servant(0, 5, 0)
+-- | Connect separate 'StockSymbol's with a comma.
+instance ToText [StockSymbol] where
+  toText :: [StockSymbol] -> Text  
+  toText = fold . intersperse "," . fmap toText
+#endif
