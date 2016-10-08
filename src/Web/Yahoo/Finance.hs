@@ -13,5 +13,4 @@ module Web.Yahoo.Finance (
     module Web.Yahoo.Finance.Types
   ) where
 
--- import Web.Yahoo.Finance.API
 import Web.Yahoo.Finance.Types
