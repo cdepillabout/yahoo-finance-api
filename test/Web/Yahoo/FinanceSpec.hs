@@ -5,13 +5,9 @@ module Web.Yahoo.FinanceSpec (
  , spec
  ) where
 
-import Control.Monad.Reader (MonadReader(..), ReaderT(..))
 import Network.HTTP.Client.TLS (getGlobalManager)
 import Web.Yahoo.Finance.YQL.Types
---import Web.Yahoo.Finance.API.YQL
 import Test.Hspec  
-import Safe (headMay)
-import Servant.API
 import Servant.Client
 
 main :: IO ()
