@@ -28,6 +28,9 @@ import Data.Text (Text)
 import Servant.API
 import Servant.Client
 
+#if !MIN_VERSION_servant(0, 5, 0) 
+import Control.Monad.Trans.Either
+#endif
 
 -- | Low-level Servant definition of the Yahoo Finance webservice API.
 type YahooFinanceYQLApi
@@ -45,18 +48,18 @@ type YahooFinanceYQLApi
 --
 -- format default is "json"
 -- env default is "store://datatables.org/alltableswithkeys"
-getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ClientM YQLResponse
-getQuotesInternal = client (Proxy :: Proxy YahooFinanceYQLApi)
-
--- | The order of arguments slightly changes for each version of servant. 
-{-
 #if MIN_VERSION_servant(0, 9, 0)
-getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ClientM QuoteList
+getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ClientM YQLResponse
 #elif MIN_VERSION_servant(0, 6, 0)
 getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> Manager -> BaseUrl -> ExceptT ServantError IO QuoteList
 #elif MIN_VERSION_servant(0, 5, 0) 
 getQuoteLowLevel :: BaseUrl -> Manager -> [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ExceptT ServantError IO QuoteList
 #else
-getQuoteLowLevel :: BaseUrl -> [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> EitherT ServantError IO QuoteList
+getQuotesInternal :: BaseUrl -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> EitherT ServantError IO YQLResponse
 #endif
+getQuotesInternal = client (Proxy :: Proxy YahooFinanceYQLApi)
+
+-- | The order of arguments slightly changes for each version of servant. 
+{-
+
 -}

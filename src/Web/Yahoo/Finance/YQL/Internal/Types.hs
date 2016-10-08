@@ -37,6 +37,11 @@ import Data.Time
 import GHC.Generics
 import Web.HttpApiData
 
+#if !MIN_VERSION_servant(0, 5, 0)
+import Servant.Common.Text
+#endif
+
+
 -- | Query for yahoo finance api.   
 data YQLQuery = YQLQuery {
   yqlQuery :: [StockSymbol]
@@ -47,6 +52,11 @@ instance ToHttpApiData YQLQuery where
   toUrlPiece :: YQLQuery -> Text
   toUrlPiece (YQLQuery {..}) = "select * from yahoo.finance.quotes where symbol in (" <> toUrlPiece yqlQuery <> ")"
 
+#if !MIN_VERSION_servant(0, 5, 0)
+instance ToText YQLQuery where
+  toText (YQLQuery {..}) = "select * from yahoo.finance.quotes where symbol in (" <> toText yqlQuery <> ")"
+#endif
+
 newtype StockSymbol = StockSymbol { unStockSymbol :: Text }
   deriving (Eq, Generic, Ord, Show)
 
@@ -55,13 +65,24 @@ instance ToHttpApiData StockSymbol where
   toUrlPiece :: StockSymbol -> Text
   toUrlPiece (StockSymbol {..}) = "\"" <> unStockSymbol <> "\""
 
+#if !MIN_VERSION_servant(0, 5, 0)
+instance ToText StockSymbol where
+  toText (StockSymbol {..}) = "\"" <> unStockSymbol <> "\""
+#endif
+
 -- | Connect separate 'StockSymbol's with a comma.
 --
 -- >>> toUrlPiece (["GOOG", "YHOO", "^GSPC"] :: [StockSymbol])
 -- "GOOG,YHOO,^GSPC"
 instance ToHttpApiData [StockSymbol] where
-    toUrlPiece :: [StockSymbol] -> Text
-    toUrlPiece = fold . intersperse "," . fmap toUrlPiece
+  toUrlPiece :: [StockSymbol] -> Text
+  toUrlPiece = fold . intersperse "," . fmap toUrlPiece
+
+#if !MIN_VERSION_servant(0, 5, 0)
+instance ToText [StockSymbol] where
+  toText = fold . intersperse "," . fmap toUrlPiece
+#endif
+
 
 {-
 instance ToText [StockSymbol] where
