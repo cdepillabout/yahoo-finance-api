@@ -28,7 +28,11 @@ import Data.Text (Text)
 import Servant.API
 import Servant.Client
 
-#if !MIN_VERSION_servant(0, 5, 0) 
+#if MIN_VERSION_servant(0, 9, 0)
+#elif MIN_VERSION_servant(0, 5, 0)
+import Control.Monad.Except
+import Network.HTTP.Client (Manager)
+#else
 import Control.Monad.Trans.Either
 #endif
 
@@ -51,9 +55,9 @@ type YahooFinanceYQLApi
 #if MIN_VERSION_servant(0, 9, 0)
 getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ClientM YQLResponse
 #elif MIN_VERSION_servant(0, 6, 0)
-getQuoteLowLevel :: [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> Manager -> BaseUrl -> ExceptT ServantError IO QuoteList
+getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> Manager -> BaseUrl -> ExceptT ServantError IO YQLResponse
 #elif MIN_VERSION_servant(0, 5, 0) 
-getQuoteLowLevel :: BaseUrl -> Manager -> [StockSymbol] -> Maybe QueryFormat -> Maybe ViewType -> ExceptT ServantError IO QuoteList
+getQuotesInternal :: BaseUrl -> Manager -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ExceptT ServantError IO YQLResponse
 #else
 getQuotesInternal :: BaseUrl -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> EitherT ServantError IO YQLResponse
 #endif
