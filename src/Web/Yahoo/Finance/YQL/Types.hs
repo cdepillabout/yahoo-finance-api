@@ -38,20 +38,21 @@ import Network.HTTP.Client (Manager)
 import Control.Monad.Trans.Either
 #endif
 
--- import Network.HTTP.Client (HasHttpManager(..), Manager)
 
--- | General client API to access Yahoo financial data.
 #if MIN_VERSION_servant(0, 9, 0)
+-- | General client API to access Yahoo financial data.
 getQuotes :: YQLQuery -> ClientM YQLResponse
 getQuotes qs = getQuotesInternal (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #elif MIN_VERSION_servant(0, 6, 0)
--- getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> Manager -> BaseUrl -> ExceptT ServantError IO YQLResponse
+-- | General client API to access Yahoo financial data.
 getQuotes :: YQLQuery -> Manager -> BaseUrl -> ExceptT ServantError IO YQLResponse
 getQuotes qs bs m  = getQuotesInternal (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "") bs m
-#elif MIN_VERSION_servant(0, 5, 0) 
+#elif MIN_VERSION_servant(0, 5, 0)
+-- | General client API to access Yahoo financial data.
 getQuotes :: BaseUrl -> Manager -> YQLQuery -> ExceptT ServantError IO YQLResponse
 getQuotes bs m qs = getQuotesInternal bs m (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #else
+-- | General client API to access Yahoo financial data.
 getQuotes :: BaseUrl -> YQLQuery -> EitherT ServantError IO YQLResponse
 getQuotes bs qs = getQuotesInternal bs (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #endif
