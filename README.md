@@ -11,7 +11,7 @@ This Haskell module exports functions for reading stock quotes from the Yahoo Fi
 Currently, only the Yahoo Finance YQL API is implemented.  They can be
 accessed with methods in
 [Web.Yahoo.Finance.API.JSON](https://hackage.haskell.org/package/yahoo-finance-api/docs/Web-Yahoo-Finance-API-JSON.html).
-The Yahoo no longer supports the Yahoo Finance webservice so we have removed the 
+The Yahoo no longer supports the Yahoo Finance webservice so we have removed the
 related querying code.
 
 ```haskell
@@ -23,14 +23,14 @@ related querying code.
 This produces output like the following:
 
 ```
-Right 
-  ( YQLResponse 
+Right
+  ( YQLResponse
     { responseCount = 2
     , responseCreated = 2016-10-09 13:44:49 UTC
     , responseLang = "en-US"
-    , responseQuotes = 
-      [ Just 
-        ( Quote 
+    , responseQuotes =
+      [ Just
+        ( Quote
           { quoteAverageDailyVolume = "1296480"
           , quoteChange = "-1.78"
           , quoteDaysLow = "770.75"
@@ -46,8 +46,8 @@ Right
           , quoteStockExchange = "NMS"
           }
         )
-      , Just 
-        (Quote 
+      , Just
+        (Quote
           { quoteAverageDailyVolume = "5999180"
           , quoteChange = "-0.41"
           , quoteDaysLow = "31.03"
