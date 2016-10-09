@@ -1,6 +1,6 @@
 {-|
 Module      : Web.Yahoo.Finance.YQL.Internal.API
-Description : Access methods for the Yahoo Finance YQL APIs.
+Description : Internal API types and functions.
 Copyright   : (c) James M.C. Haver II, 2016
 License     : BSD3
 
@@ -36,7 +36,7 @@ import Network.HTTP.Client (Manager)
 import Control.Monad.Trans.Either
 #endif
 
--- | Low-level Servant definition of the Yahoo Finance webservice API.
+-- | Low-level Servant definition of the Yahoo Finance YQL client API.
 type YahooFinanceYQLApi
   =  "v1"
   :> "public"
@@ -48,10 +48,12 @@ type YahooFinanceYQLApi
   :> Get '[JSON] YQLResponse
 
 -- | 'QueryParam' are treated as maybes but Yahoo requires that all the fields
--- be filled except for "callback".
+-- be filled except for "callback". Quotes are returned in the order they are
+-- queried.
 --
 -- format default is "json"
 -- env default is "store://datatables.org/alltableswithkeys"
+-- The order of arguments varies slightly with each version of Servant.
 #if MIN_VERSION_servant(0, 9, 0)
 getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ClientM YQLResponse
 #elif MIN_VERSION_servant(0, 6, 0)
@@ -62,8 +64,3 @@ getQuotesInternal :: BaseUrl -> Manager -> Maybe YQLQuery -> Maybe Text -> Maybe
 getQuotesInternal :: BaseUrl -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> EitherT ServantError IO YQLResponse
 #endif
 getQuotesInternal = client (Proxy :: Proxy YahooFinanceYQLApi)
-
--- | The order of arguments slightly changes for each version of servant. 
-{-
-
--}

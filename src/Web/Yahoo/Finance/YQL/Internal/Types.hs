@@ -1,6 +1,6 @@
 {-|
 Module      : Web.Yahoo.Finance.YQL.Internal.Types
-Description : Access methods for the Yahoo Finance YQL APIs.
+Description : Internal data types and type class instances.
 Copyright   : (c) James M.C. Haver II, 2016
 License     : BSD3
 
@@ -34,6 +34,7 @@ import Data.List (intersperse)
 import Data.Monoid ((<>))
 import Data.Text (Text)
 import Data.Time
+import qualified Data.Vector as V
 import GHC.Generics
 import Web.HttpApiData
 
@@ -41,7 +42,6 @@ import Web.HttpApiData
 import Servant.Common.Text
 #endif
 
-import qualified Data.Vector as V
 
 -- | Query for yahoo finance api.   
 data YQLQuery = YQLQuery {
@@ -49,49 +49,62 @@ data YQLQuery = YQLQuery {
 } deriving (Eq, Show, Generic)
 
 -- | Automate a simple YQL query.
+-- 
+-- >>> toUrlPiece $ YQLQuery [StockSymbol "GOOG", StockSymbol "YHOO"]
+-- "select * from yahoo.finance.quotes where symbol in (\"GOOG\",\"YHOO\")"
 instance ToHttpApiData YQLQuery where
   toUrlPiece :: YQLQuery -> Text
   toUrlPiece (YQLQuery {..}) = "select * from yahoo.finance.quotes where symbol in (" <> toUrlPiece yqlQuery <> ")"
 
 #if !MIN_VERSION_servant(0, 5, 0)
+-- | Automate a simple YQL query.
+-- 
+-- >>> toText $ YQLQuery [StockSymbol "GOOG", StockSymbol "YHOO"]
+-- "select * from yahoo.finance.quotes where symbol in (\"GOOG\",\"YHOO\")"
 instance ToText YQLQuery where
   toText (YQLQuery {..}) = "select * from yahoo.finance.quotes where symbol in (" <> toText yqlQuery <> ")"
 #endif
 
+-- | Use this type to encode 'toUrlPiece' or 'toText' (depending on Servant 
+-- version) for queries.
 newtype StockSymbol = StockSymbol { unStockSymbol :: Text }
   deriving (Eq, Generic, Ord, Show)
 
 -- | Surround 'StockSymbol' with double quotes.
+--
+-- >>> toUrlPiece (StockSymbol "GOOG")
+-- "\"GOOG\""
 instance ToHttpApiData StockSymbol where
   toUrlPiece :: StockSymbol -> Text
   toUrlPiece (StockSymbol {..}) = "\"" <> unStockSymbol <> "\""
 
 #if !MIN_VERSION_servant(0, 5, 0)
+  -- | Surround 'StockSymbol' with double quotes.
+  --
+  -- >>> toText (StockSymbol "GOOG")
+  -- "\"GOOG\""
 instance ToText StockSymbol where
   toText (StockSymbol {..}) = "\"" <> unStockSymbol <> "\""
 #endif
 
 -- | Connect separate 'StockSymbol's with a comma.
 --
--- >>> toUrlPiece (["GOOG", "YHOO", "^GSPC"] :: [StockSymbol])
--- "GOOG,YHOO,^GSPC"
+-- >>> toUrlPiece ([StockSymbol "GOOG", StockSymbol "YHOO", StockSymbol "GSPC"] :: [StockSymbol])
+-- "\"GOOG\",\"YHOO\",\"GSPC\""
 instance ToHttpApiData [StockSymbol] where
   toUrlPiece :: [StockSymbol] -> Text
   toUrlPiece = fold . intersperse "," . fmap toUrlPiece
 
 #if !MIN_VERSION_servant(0, 5, 0)
+  -- | Connect separate 'StockSymbol's with a comma.
+  --
+  -- >>> toText ([StockSymbol "GOOG", StockSymbol "YHOO", StockSymbol "GSPC"] :: [StockSymbol])
+  -- "GOOG,YHOO,GSPC"
 instance ToText [StockSymbol] where
   toText = fold . intersperse "," . fmap toUrlPiece
 #endif
 
-
-{-
-instance ToText [StockSymbol] where
-  toText :: [StockSymbol] -> Text  
-  toText = fold . intersperse "," . fmap toText
--}
-
-
+-- | Response from a YQL query.
 data YQLResponse = YQLResponse {
   responseCount   :: Int
 , responseCreated :: UTCTime
@@ -105,19 +118,20 @@ instance FromJSON YQLResponse where
     results <- innerO .: "results"
     
     innerQuotes  <- results .: "quote"
+    -- YQL returns either a single quote as an object or multiple quotes as an 
+    -- array of objects. If the queried 'StockSymbol' does not exist then YQL
+    -- returns an object with all fields as null.
     quotes <- case innerQuotes of 
-      (Object o) -> (:[]) <$> (parseJSON innerQuotes <|> pure Nothing) :: Parser [Maybe Quote]
+      (Object _) -> (:[]) <$> (parseJSON innerQuotes <|> pure Nothing) :: Parser [Maybe Quote]
       (Array  a) -> sequence $ (\x -> parseJSON x <|> pure Nothing) <$> (V.toList a)
-      
-      _ -> return []
-    
-    --quotes <- ((results .:? "quote" :: (Parser (Maybe Quote))) >>= \q -> return [q]) <|> (results .: "quote" :: Parser [Maybe Quote])
+      _ -> fail "responseQuotes expects to find an object or array with the key 'quote'"
     
     YQLResponse <$> innerO .: "count"
                 <*> innerO .: "created"
                 <*> innerO .: "lang"
                 <*> pure quotes
 
+-- | Quote data received from YQL.
 data Quote = Quote {
   quoteAverageDailyVolume   :: Text
 , quoteChange               :: Text

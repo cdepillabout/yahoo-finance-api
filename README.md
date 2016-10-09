@@ -8,55 +8,64 @@ This Haskell module exports functions for reading stock quotes from the Yahoo Fi
 
 ## Usage
 
-Currently, only the Yahoo Finance webservice APIs are implemented.  They can be
+Currently, only the Yahoo Finance YQL API is implemented.  They can be
 accessed with methods in
 [Web.Yahoo.Finance.API.JSON](https://hackage.haskell.org/package/yahoo-finance-api/docs/Web-Yahoo-Finance-API-JSON.html).
+The Yahoo no longer supports the Yahoo Finance webservice so we have removed the 
+related querying code.
 
 ```haskell
-(manager :: Manager) <- getGlobalManager
-(eitherRes :: Either ServantError QuoteList) <-
-    runExceptT $ runReaderT (getQuote ["VGTSX", "GOOG"]) manager
-let (res :: QuoteList) =
-        either undefined id eitherRes -- Warning: this is unsafe...
-show $ unQuoteList res
+λ> manager <- getGlobalManager
+λ> res <- runClientM (getQuotes (YQLQuery [StockSymbol "GOOG", StockSymbol "AA"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
+λ> print res
 ```
 
 This produces output like the following:
 
 ```
-[ Quote
-    { quoteChange = "0.050000"
-    , quoteChangePercent = "0.350141"
-    , quoteDayHigh = "0.000000"
-    , quoteDayLow = "0.000000"
-    , quoteIssuerName = "Vanguard Total Intl Stock Index Inv"
-    , quoteIssuerNameLang = "Vanguard Total Intl Stock Index Inv"
-    , quoteName = "Vanguard Total International St"
-    , quotePrice = "14.330000"
-    , quoteSymbol = "VGTSX"
-    , quoteTS = "1467413100"
-    , quoteType = "mutualfund"
-    , quoteUTCTime = 2016-07-01 22:45:00 UTC
-    , quoteVolume = "0"
-    , quoteYearHigh = "16.330000"
-    , quoteYearLow = "12.760000"
+Right 
+  ( YQLResponse 
+    { responseCount = 2
+    , responseCreated = 2016-10-09 13:44:49 UTC
+    , responseLang = "en-US"
+    , responseQuotes = 
+      [ Just 
+        ( Quote 
+          { quoteAverageDailyVolume = "1296480"
+          , quoteChange = "-1.78"
+          , quoteDaysLow = "770.75"
+          , quoteDaysHigh = "779.66"
+          , quoteYearLow = "639.01"
+          , quoteYearHigh = "789.87"
+          , quoteMarketCapitalization = "532.69B"
+          , quoteLastTradePriceOnly = "775.08"
+          , quoteDaysRange = "770.75 - 779.66"
+          , quoteName = "Alphabet Inc."
+          , quoteSymbol = "GOOG"
+          , quoteVolume = "933158"
+          , quoteStockExchange = "NMS"
+          }
+        )
+      , Just 
+        (Quote 
+          { quoteAverageDailyVolume = "5999180"
+          , quoteChange = "-0.41"
+          , quoteDaysLow = "31.03"
+          , quoteDaysHigh = "32.10"
+          , quoteYearLow = "18.42"
+          , quoteYearHigh = "34.50"
+          , quoteMarketCapitalization = "41.26B"
+          , quoteLastTradePriceOnly = "31.37"
+          , quoteDaysRange = "31.03 - 32.10"
+          , quoteName = "Alcoa Inc. Common Stock"
+          , quoteSymbol = "AA"
+          , quoteVolume = "7858603"
+          , quoteStockExchange = "NYQ"
+          }
+        )
+      ]
     }
-, Quote
-    { quoteChange = "7.110046"
-    , quoteChangePercent = "1.027315"
-    , quoteDayHigh = "700.650024"
-    , quoteDayLow = "692.130127"
-    , quoteIssuerName = "Alphabet Inc."
-    , quoteIssuerNameLang = "Alphabet Inc."
-    , quoteName = "Alphabet Inc."
-    , quotePrice = "699.210022"
-    , quoteSymbol = "GOOG"
-    , quoteTS = "1467403200"
-    , quoteType = "equity"
-    , quoteUTCTime = 2016-07-01 20:00:00 UTC
-    , quoteVolume = "1344710"
-    , quoteYearHigh = "789.870000"
-    , quoteYearLow = "515.180000"
-    }
-]
+  )
 ```
+
+For other examples refer to `test/Web/Yahoo/FinanceSpec.hs`.
