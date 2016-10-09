@@ -38,6 +38,7 @@ test-suite yahoo-finance-api-test
   main-is:             Spec.hs
   other-modules:       Web.Yahoo.FinanceSpec
   build-depends:       base
+                     , either
                      , hspec
                      , yahoo-finance-api
                      , http-client
