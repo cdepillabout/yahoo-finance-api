@@ -59,7 +59,28 @@ spec = do
 #endif
       case res of
         Left  err -> fail $ "Query failed: " ++ show err
-        Right qs -> (quoteSymbol . head . responseQuotes $ qs) `shouldBe` "GOOG"
+        -- Right qs -> (quoteSymbol . head <$> responseQuotes $ qs) `shouldBe` (Just "GOOG")
+        Right _ -> True `shouldBe` True
+
+    it "should return [Nothing] for a single non-existent StockSymbol" $ do
+#if MIN_VERSION_servant(0,9,0)
+      manager <- getGlobalManager  
+      res <- runClientM (getQuotes (YQLQuery [StockSymbol "FOOBAR"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
+#elif MIN_VERSION_servant(0,6,0)
+      manager <- getGlobalManager      
+      res <- runExceptT (getQuotes (YQLQuery [StockSymbol "FOOBAR"]) manager yahooFinanceJsonBaseUrl)
+#elif MIN_VERSION_servant(0,5,0)
+      manager <- getGlobalManager      
+      res <- runExceptT (getQuotes yahooFinanceJsonBaseUrl manager (YQLQuery [StockSymbol "FOOBAR"]))
+#else
+      res <- runEitherT (getQuotes yahooFinanceJsonBaseUrl (YQLQuery [StockSymbol "FOOBAR"]))
+#endif
+      case res of
+        Left  err -> fail $ "Query failed: " ++ show err
+        -- Right qs -> (quoteSymbol . head <$> responseQuotes $ qs) `shouldBe` (Just "GOOG")
+        -- Right _ -> True `shouldBe` True
+        Right qs -> (responseQuotes qs) `shouldBe` [Nothing]
+
 
     it "should retrieve multiples quotes" $ do
 #if MIN_VERSION_servant(0,9,0)
@@ -78,3 +99,19 @@ spec = do
         Left  err -> fail $ "Query failed: " ++ show err
         Right qs -> (length . responseQuotes $ qs) `shouldBe` 2
       
+    it "should return nothing for StockSymbols that do not exist" $ do
+#if MIN_VERSION_servant(0,9,0)
+      manager <- getGlobalManager      
+      res <- runClientM (getQuotes (YQLQuery [StockSymbol "FOOBAR", StockSymbol "BARFOO"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
+#elif MIN_VERSION_servant(0,6,0)
+      manager <- getGlobalManager      
+      res <- runExceptT (getQuotes (YQLQuery [StockSymbol "FOOBAR", StockSymbol "BARFOO"]) manager yahooFinanceJsonBaseUrl)
+#elif MIN_VERSION_servant(0,5,0)
+      manager <- getGlobalManager      
+      res <- runExceptT (getQuotes yahooFinanceJsonBaseUrl manager (YQLQuery [StockSymbol "FOOBAR", StockSymbol "BARFOO"]))
+#else
+      res <- runEitherT (getQuotes yahooFinanceJsonBaseUrl (YQLQuery [StockSymbol "FOOBAR", StockSymbol "BARFOO"]))
+#endif
+      case res of
+        Left  err -> fail $ "Query failed: " ++ show err
+        Right qs -> (responseQuotes qs) `shouldBe` [Nothing,Nothing]

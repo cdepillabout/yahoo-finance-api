@@ -41,6 +41,7 @@ import Web.HttpApiData
 import Servant.Common.Text
 #endif
 
+import qualified Data.Vector as V
 
 -- | Query for yahoo finance api.   
 data YQLQuery = YQLQuery {
@@ -95,14 +96,22 @@ data YQLResponse = YQLResponse {
   responseCount   :: Int
 , responseCreated :: UTCTime
 , responseLang    :: Text
-, responseQuotes  :: [Quote]
+, responseQuotes  :: [Maybe Quote]
 } deriving (Eq, Read, Show, Generic)
 
 instance FromJSON YQLResponse where
   parseJSON = withObject "YQLResponse" $ \o -> do
     innerO <- o .: "query"
     results <- innerO .: "results"
-    quotes <- ((results .: "quote" :: (Parser Quote)) >>= \q -> return [q]) <|> (results .: "quote" :: Parser [Quote])
+    
+    innerQuotes  <- results .: "quote"
+    quotes <- case innerQuotes of 
+      (Object o) -> (:[]) <$> (parseJSON innerQuotes <|> pure Nothing) :: Parser [Maybe Quote]
+      (Array  a) -> sequence $ (\x -> parseJSON x <|> pure Nothing) <$> (V.toList a)
+      
+      _ -> return []
+    
+    --quotes <- ((results .:? "quote" :: (Parser (Maybe Quote))) >>= \q -> return [q]) <|> (results .: "quote" :: Parser [Maybe Quote])
     
     YQLResponse <$> innerO .: "count"
                 <*> innerO .: "created"
@@ -114,8 +123,8 @@ data Quote = Quote {
 , quoteChange               :: Text
 , quoteDaysLow              :: Text
 , quoteDaysHigh             :: Text
-, quoteYearLow             :: Text
-, quoteYearHigh            :: Text
+, quoteYearLow              :: Text
+, quoteYearHigh             :: Text
 , quoteMarketCapitalization :: Text
 , quoteLastTradePriceOnly   :: Text
 , quoteDaysRange            :: Text

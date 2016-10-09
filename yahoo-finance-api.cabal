@@ -1,12 +1,12 @@
 name:                yahoo-finance-api
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Read quotes from Yahoo Finance API
 description:         Haskell wrapper for the stock APIs provided by Yahoo Finance.
 homepage:            https://github.com/cdepillabout/yahoo-finance-api
 license:             BSD3
 license-file:        LICENSE
-author:              Dennis Gosnell
-maintainer:          cdep.illabout@gmail.com
+author:              Dennis Gosnell, James M.C. Haver II
+maintainer:          cdep.illabout@gmail.com, mchaver@gmail.com
 copyright:           2016 Dennis Gosnell
 category:            Web
 build-type:          Simple
@@ -29,6 +29,7 @@ library
                      , text
                      , time
                      , transformers
+                     , vector
   default-language:    Haskell2010
   ghc-options:         -Wall -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
 
@@ -56,7 +57,7 @@ test-suite yahoo-finance-api-doctest
   hs-source-dirs:      test
   build-depends:       base
                      , doctest >= 0.11
-                     , Glob >= 0.7
+                     , Glob    >= 0.7
   default-language:    Haskell2010
   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
 
