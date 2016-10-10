@@ -21,7 +21,7 @@ This is an internal module. Use at your own risk.
 
 module Web.Yahoo.Finance.YQL.Internal.Types (
     Quote(..)
-  , StockSymbol(..)    
+  , StockSymbol(..)
   , YQLQuery(..)
   , YQLResponse(..)
   ) where
@@ -43,13 +43,13 @@ import Servant.Common.Text
 #endif
 
 
--- | Query for yahoo finance api.   
+-- | Query for yahoo finance api.
 data YQLQuery = YQLQuery {
   yqlQuery :: [StockSymbol]
 } deriving (Eq, Show, Generic)
 
 -- | Automate a simple YQL query.
--- 
+--
 -- >>> toUrlPiece $ YQLQuery [StockSymbol "GOOG", StockSymbol "YHOO"]
 -- "select * from yahoo.finance.quotes where symbol in (\"GOOG\",\"YHOO\")"
 instance ToHttpApiData YQLQuery where
@@ -58,14 +58,14 @@ instance ToHttpApiData YQLQuery where
 
 #if !MIN_VERSION_servant(0, 5, 0)
 -- | Automate a simple YQL query.
--- 
+--
 -- >>> toText $ YQLQuery [StockSymbol "GOOG", StockSymbol "YHOO"]
 -- "select * from yahoo.finance.quotes where symbol in (\"GOOG\",\"YHOO\")"
 instance ToText YQLQuery where
   toText (YQLQuery {..}) = "select * from yahoo.finance.quotes where symbol in (" <> toText yqlQuery <> ")"
 #endif
 
--- | Use this type to encode 'toUrlPiece' or 'toText' (depending on Servant 
+-- | Use this type to encode 'toUrlPiece' or 'toText' (depending on Servant
 -- version) for queries.
 newtype StockSymbol = StockSymbol { unStockSymbol :: Text }
   deriving (Eq, Generic, Ord, Show)
@@ -116,16 +116,16 @@ instance FromJSON YQLResponse where
   parseJSON = withObject "YQLResponse" $ \o -> do
     innerO <- o .: "query"
     results <- innerO .: "results"
-    
+
     innerQuotes  <- results .: "quote"
-    -- YQL returns either a single quote as an object or multiple quotes as an 
+    -- YQL returns either a single quote as an object or multiple quotes as an
     -- array of objects. If the queried 'StockSymbol' does not exist then YQL
     -- returns an object with all fields as null.
-    quotes <- case innerQuotes of 
+    quotes <- case innerQuotes of
       (Object _) -> (:[]) <$> (parseJSON innerQuotes <|> pure Nothing) :: Parser [Maybe Quote]
       (Array  a) -> sequence $ (\x -> parseJSON x <|> pure Nothing) <$> (V.toList a)
       _ -> fail "responseQuotes expects to find an object or array with the key 'quote'"
-    
+
     YQLResponse <$> innerO .: "count"
                 <*> innerO .: "created"
                 <*> innerO .: "lang"

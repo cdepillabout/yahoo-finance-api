@@ -39,24 +39,18 @@ import Control.Monad.Trans.Either
 #endif
 
 
-#if MIN_VERSION_servant(0, 9, 0)
--- | General client API to access Yahoo financial data. Quotes are returned 
+-- | General client API to access Yahoo financial data. Quotes are returned
 -- in the order they are queried.
+#if MIN_VERSION_servant(0, 9, 0)
 getQuotes :: YQLQuery -> ClientM YQLResponse
 getQuotes qs = getQuotesInternal (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #elif MIN_VERSION_servant(0, 6, 0)
--- | General client API to access Yahoo financial data. Quotes are returned 
--- in the order they are queried.
 getQuotes :: YQLQuery -> Manager -> BaseUrl -> ExceptT ServantError IO YQLResponse
 getQuotes qs bs m  = getQuotesInternal (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "") bs m
 #elif MIN_VERSION_servant(0, 5, 0)
--- | General client API to access Yahoo financial data. Quotes are returned 
--- in the order they are queried.
 getQuotes :: BaseUrl -> Manager -> YQLQuery -> ExceptT ServantError IO YQLResponse
 getQuotes bs m qs = getQuotesInternal bs m (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #else
--- | General client API to access Yahoo financial data. Quotes are returned 
--- in the order they are queried.
 getQuotes :: BaseUrl -> YQLQuery -> EitherT ServantError IO YQLResponse
 getQuotes bs qs = getQuotesInternal bs (Just qs) (Just "json") (Just "store://datatables.org/alltableswithkeys") (Just "")
 #endif
@@ -65,11 +59,11 @@ getQuotes bs qs = getQuotesInternal bs (Just qs) (Just "json") (Just "store://da
 -- | 'BaseUrl' for the Yahoo Finance YQL API.  This represents
 -- @https://finance.yahoo.com@.
 yahooFinanceJsonBaseUrl :: BaseUrl
-yahooFinanceJsonBaseUrl = BaseUrl { 
+yahooFinanceJsonBaseUrl = BaseUrl {
   baseUrlScheme = Https
 , baseUrlHost = "query.yahooapis.com"
 , baseUrlPort = 443
-#if MIN_VERSION_servant(0, 5, 0)    
+#if MIN_VERSION_servant(0, 5, 0)
 , baseUrlPath = "/"
-#endif    
+#endif
 }

@@ -20,7 +20,7 @@ This is an internal module. Use at your own risk.
 {-# LANGUAGE TypeOperators              #-}
 
 module Web.Yahoo.Finance.YQL.Internal.API where
-  
+
 import Web.Yahoo.Finance.YQL.Internal.Types
 
 import Data.Proxy
@@ -58,7 +58,7 @@ type YahooFinanceYQLApi
 getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ClientM YQLResponse
 #elif MIN_VERSION_servant(0, 6, 0)
 getQuotesInternal :: Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> Manager -> BaseUrl -> ExceptT ServantError IO YQLResponse
-#elif MIN_VERSION_servant(0, 5, 0) 
+#elif MIN_VERSION_servant(0, 5, 0)
 getQuotesInternal :: BaseUrl -> Manager -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> ExceptT ServantError IO YQLResponse
 #else
 getQuotesInternal :: BaseUrl -> Maybe YQLQuery -> Maybe Text -> Maybe Text -> Maybe Text -> EitherT ServantError IO YQLResponse
