@@ -22,12 +22,12 @@ import Control.Monad.Trans.Either
 main :: IO ()
 main = hspec spec
 
-spec :: Spec 
+spec :: Spec
 spec = do
-#if MIN_VERSION_servant(0,5,0)  
+#if MIN_VERSION_servant(0,5,0)
   manager <- runIO getGlobalManager
 #endif
-  describe "getQuotes" $ do 
+  describe "getQuotes" $ do
     it "should retrieve 'GOOG' stock information (assuming the stock with symbol 'GOOG' exists)" $ do
 #if MIN_VERSION_servant(0,9,0)
       res <- runClientM (getQuotes (YQLQuery [StockSymbol "GOOG"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
@@ -70,7 +70,7 @@ spec = do
       case res of
         Left  err -> fail $ "Query failed: " ++ show err
         Right qs -> (length . responseQuotes $ qs) `shouldBe` 2
-      
+
     it "should return nothing for StockSymbols that do not exist" $ do
 #if MIN_VERSION_servant(0,9,0)
       res <- runClientM (getQuotes (YQLQuery [StockSymbol "FOOBAR", StockSymbol "BARFOO"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
