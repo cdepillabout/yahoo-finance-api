@@ -42,6 +42,9 @@ import Web.HttpApiData
 import Servant.Common.Text
 #endif
 
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative
+#endif
 
 -- | Query for yahoo finance api.
 data YQLQuery = YQLQuery {
