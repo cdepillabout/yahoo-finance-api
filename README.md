@@ -2,7 +2,10 @@
 Web.Yahoo.Finance
 =================
 
-[![Hackage](https://img.shields.io/hackage/v/yahoo-finance-api.svg)](https://hackage.haskell.org/package/yahoo-finance-api) [![Build Status](https://secure.travis-ci.org/cdepillabout/yahoo-finance-api.svg)](http://travis-ci.org/cdepillabout/yahoo-finance-api)
+[![Build Status](https://secure.travis-ci.org/cdepillabout/yahoo-finance-api.svg)](http://travis-ci.org/cdepillabout/yahoo-finance-api)
+[![Hackage](https://img.shields.io/hackage/v/yahoo-finance-api.svg)](https://hackage.haskell.org/package/yahoo-finance-api)
+[![Stackage LTS](http://stackage.org/package/yahoo-finance-api/badge/lts)](http://stackage.org/lts/package/yahoo-finance-api)
+[![Stackage Nightly](http://stackage.org/package/yahoo-finance-api/badge/nightly)](http://stackage.org/nightly/package/yahoo-finance-api)
 
 This Haskell module exports functions for reading stock quotes from the Yahoo Finance APIs.
 
@@ -15,6 +18,8 @@ The Yahoo no longer supports the Yahoo Finance webservice so we have removed the
 related querying code.
 
 ```haskell
+λ> :set -XOverloadedStrings
+λ> import Network.HTTP.Client.TLS (getGlobalManager)
 λ> manager <- getGlobalManager
 λ> res <- runClientM (getQuotes (YQLQuery [StockSymbol "GOOG", StockSymbol "AA"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
 λ> print res
