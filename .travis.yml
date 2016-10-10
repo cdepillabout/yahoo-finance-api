@@ -126,7 +126,7 @@ install:
 - |
   case "$BUILD" in
     stack)
-      stack --no-terminal --install-ghc $ARGS test --only-dependencies
+      stack --no-terminal --install-ghc $ARGS build --only-dependencies
       ;;
     cabal)
       cabal --version
@@ -139,13 +139,12 @@ script:
 - |
   case "$BUILD" in
     stack)
-      stack --no-terminal $ARGS test --haddock --no-haddock-deps
+      stack --no-terminal $ARGS build --haddock --no-haddock-deps
       ;;
     cabal)
       cabal configure --enable-tests --enable-benchmarks -v2 --ghc-options="-O0 -Wall"
       cabal build
       cabal check || [ "$CABALVER" == "1.16" ]
-      cabal test
       cabal sdist
       cabal copy
       SRC_TGZ=$(cabal info . | awk '{print $2;exit}').tar.gz && \
