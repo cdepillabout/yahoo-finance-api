@@ -15,9 +15,9 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Web.Yahoo.Finance.YQL.Internal.API
+  exposed-modules:     Web.Yahoo.Finance.YQL
+                       Web.Yahoo.Finance.YQL.Internal.API
                        Web.Yahoo.Finance.YQL.Internal.Types
-                       Web.Yahoo.Finance.YQL.Types
   build-depends:       base  >= 4.7 && < 5
                      , aeson 
                      , either

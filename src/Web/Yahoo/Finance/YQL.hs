@@ -1,5 +1,5 @@
 {-|
-Module      : Web.Yahoo.Finance.YQL.Types
+Module      : Web.Yahoo.Finance.YQL
 Description : Expose certain types and functions.
 Copyright   : (c) James M.C. Haver II, 2016
 License     : BSD3
@@ -19,11 +19,15 @@ This module contains methods for accessing the Yahoo Finance YQL APIs.
 {-# LANGUAGE RecordWildCards            #-}
 {-# LANGUAGE TypeOperators              #-}
 
-module Web.Yahoo.Finance.YQL.Types (
-    module Web.Yahoo.Finance.YQL.Internal.API
-  , module Web.Yahoo.Finance.YQL.Internal.Types
-  , getQuotes
+module Web.Yahoo.Finance.YQL (
+  -- * Fetch Stock Quotes
+    getQuotes
   , yahooFinanceJsonBaseUrl
+  -- * Types
+  , YQLQuery(..)
+  , StockSymbol(..)
+  , YQLResponse(..)
+  , Quote(..)
   ) where
 
 import Servant.Client
@@ -67,3 +71,4 @@ yahooFinanceJsonBaseUrl = BaseUrl {
 , baseUrlPath = "/"
 #endif
 }
+

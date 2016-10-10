@@ -10,7 +10,7 @@ import Data.Maybe (isJust)
 import Network.HTTP.Client.TLS (getGlobalManager)
 import Servant.Client
 import Test.Hspec  
-import Web.Yahoo.Finance.YQL.Types
+import Web.Yahoo.Finance.YQL
 
 #if MIN_VERSION_servant(0,9,0)
 #elif MIN_VERSION_servant(0,5,0)
