@@ -1,12 +1,12 @@
 name:                yahoo-finance-api
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Read quotes from Yahoo Finance API
 description:         Haskell wrapper for the stock APIs provided by Yahoo Finance.
 homepage:            https://github.com/cdepillabout/yahoo-finance-api
 license:             BSD3
 license-file:        LICENSE
-author:              Dennis Gosnell
-maintainer:          cdep.illabout@gmail.com
+author:              Dennis Gosnell, James M.C. Haver II
+maintainer:          cdep.illabout@gmail.com, mchaver@gmail.com
 copyright:           2016 Dennis Gosnell
 category:            Web
 build-type:          Simple
@@ -15,26 +15,21 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Web.Yahoo.Finance
-                     , Web.Yahoo.Finance.API
-                     , Web.Yahoo.Finance.API.CSV
-                     , Web.Yahoo.Finance.API.JSON
-                     , Web.Yahoo.Finance.API.JSON.Internal
-                     , Web.Yahoo.Finance.API.YQL
-                     , Web.Yahoo.Finance.Types
+  exposed-modules:     Web.Yahoo.Finance.YQL
+                       Web.Yahoo.Finance.YQL.Internal.API
+                       Web.Yahoo.Finance.YQL.Internal.Types
   build-depends:       base  >= 4.7 && < 5
-                     , aeson >= 0.11
+                     , aeson 
                      , either
                      , http-api-data
                      , http-client
-                     , lens >= 4.13
-                     , lens-aeson >= 1.0
                      , mtl
                      , servant        >= 0.4 && < 0.10
                      , servant-client >= 0.4 && < 0.10
                      , text
                      , time
                      , transformers
+                     , vector
   default-language:    Haskell2010
   ghc-options:         -Wall -fwarn-incomplete-uni-patterns -fwarn-incomplete-record-updates -fwarn-monomorphism-restriction
 
@@ -44,6 +39,7 @@ test-suite yahoo-finance-api-test
   main-is:             Spec.hs
   other-modules:       Web.Yahoo.FinanceSpec
   build-depends:       base
+                     , either
                      , hspec
                      , yahoo-finance-api
                      , http-client
@@ -61,7 +57,7 @@ test-suite yahoo-finance-api-doctest
   hs-source-dirs:      test
   build-depends:       base
                      , doctest >= 0.11
-                     , Glob >= 0.7
+                     , Glob    >= 0.7
   default-language:    Haskell2010
   ghc-options:         -Wall -threaded -rtsopts -with-rtsopts=-N
 
