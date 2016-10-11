@@ -11,15 +11,17 @@ This Haskell module exports functions for reading stock quotes from the Yahoo Fi
 
 ## Usage
 
-Currently, only the Yahoo Finance YQL API is implemented.  They can be
+Currently, only the Yahoo Finance YQL API is implemented.  It can be
 accessed with methods in
-[Web.Yahoo.Finance.API.JSON](https://hackage.haskell.org/package/yahoo-finance-api/docs/Web-Yahoo-Finance-API-JSON.html).
-The Yahoo no longer supports the Yahoo Finance webservice so we have removed the
-related querying code.
+[Web.Yahoo.Finance.YQL](https://hackage.haskell.org/package/yahoo-finance-api/docs/Web-Yahoo-Finance-YQL.html).
+
+(**Note:** The following usage example only works when using `servant-0.9`.)
 
 ```haskell
 λ> :set -XOverloadedStrings
 λ> import Network.HTTP.Client.TLS (getGlobalManager)
+λ> import Servant.Client (ClientEnv(ClientEnv), runClientM)
+λ> import Web.Yahoo.Finance.YQL (StockSymbol(StockSymbol), YQLQuery(YQLQuery), getQuotes, yahooFinanceJsonBaseUrl)
 λ> manager <- getGlobalManager
 λ> res <- runClientM (getQuotes (YQLQuery [StockSymbol "GOOG", StockSymbol "AA"]) ) (ClientEnv manager yahooFinanceJsonBaseUrl)
 λ> print res
