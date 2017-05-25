@@ -1,0 +1,10 @@
+work-dir: .stack-work-servant-0.11
+resolver: lts-8.14
+packages:
+ - '.'
+extra-deps:
+ - cabal-doctest-1.0.2
+ - http-api-data-0.3.7.1
+ - natural-transformation-0.4
+ - servant-0.11
+ - servant-client-0.11
