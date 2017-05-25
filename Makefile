@@ -1,4 +1,4 @@
-.PHONY: build build-haddock clean db-dump-schema db-info db-migrate ghci haddock haddock-server hlint lint repl test watch watch-tests watch-test
+.PHONY: build build-haddock clean db-dump-schema db-info db-migrate ghci haddock haddock-server hlint lint repl test upload watch watch-tests watch-test
 all: build
 
 clean:
@@ -39,3 +39,6 @@ lint:
 # In order to run this, you need to have run `make build-haddock`.
 haddock-server:
 	cd "$$(stack path --local-doc-root)" && python -m http.server 8001
+
+upload:
+	stack upload .
