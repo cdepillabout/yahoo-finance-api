@@ -1,5 +1,5 @@
 name:                yahoo-finance-api
-version:             0.2.0.1
+version:             0.2.0.2
 synopsis:            Read quotes from Yahoo Finance API
 description:         Haskell wrapper for the stock APIs provided by Yahoo Finance.
 homepage:            https://github.com/cdepillabout/yahoo-finance-api
