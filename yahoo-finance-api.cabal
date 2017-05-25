@@ -24,8 +24,8 @@ library
                      , http-api-data
                      , http-client
                      , mtl
-                     , servant        >= 0.4 && < 0.11
-                     , servant-client >= 0.4 && < 0.11
+                     , servant        >= 0.4
+                     , servant-client >= 0.4
                      , text
                      , time
                      , transformers
