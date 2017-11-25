@@ -7,6 +7,8 @@ Web.Yahoo.Finance
 [![Stackage LTS](http://stackage.org/package/yahoo-finance-api/badge/lts)](http://stackage.org/lts/package/yahoo-finance-api)
 [![Stackage Nightly](http://stackage.org/package/yahoo-finance-api/badge/nightly)](http://stackage.org/nightly/package/yahoo-finance-api)
 
+*UPDATE*: It appears that Yahoo disabled the quote API this package is using.  See #5.
+
 This Haskell module exports functions for reading stock quotes from the Yahoo Finance APIs.
 
 ## Usage
