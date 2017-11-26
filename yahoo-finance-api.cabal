@@ -1,7 +1,12 @@
 name:                yahoo-finance-api
-version:             0.2.0.2
-synopsis:            Read quotes from Yahoo Finance API
-description:         Haskell wrapper for the stock APIs provided by Yahoo Finance.
+version:             0.2.0.3
+synopsis:            Read quotes from Yahoo Finance API.
+description:
+  Haskell wrapper for the stock APIs provided by Yahoo Finance.
+  .
+  __UPDATE__: It appears that yahoo disabled the quote API used by this
+  pakcage.  This package is no longer usable.  See
+  <https://github.com/cdepillabout/yahoo-finance-api/issues/5 this issue>.
 homepage:            https://github.com/cdepillabout/yahoo-finance-api
 license:             BSD3
 license-file:        LICENSE
